@@ -1,0 +1,27 @@
+const login = async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).send('Falta usuario y contraseña.');
+    }
+    const user = findUserByUsername(username);
+    if (!user) {
+        return res.status(401).send('Usuario o contraseña incorrectos.');
+    }
+    const passwordCorrect = bcrypt.compareSync(password, user.password_hash);
+    if (!passwordCorrect) {
+        return res.status(401).send('Usuario o contraseña incorrectos.');
+    }
+    //Cargar calendario
+    let calendar = findCalendarByUserID(user.id);
+    if (!calendar) {
+        const calendarId = createDefaultCalendarForUser(user.id);
+        calendar = { id: calendarId };
+    }
+    //Guardar en sesión
+    req.session.userID = user.id;
+    req.session.calendarID = calendar.id;
+    //Redirigir al calendario
+    res.redirect('/');
+}
+
+module.exports = login;

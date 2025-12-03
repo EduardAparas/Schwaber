@@ -1,8 +1,14 @@
 const path = require('path');
 const express = require('express');
+const cors = require('cors');
 const session = require('express-session');
 const Database = require('better-sqlite3');
 const bcrypt = require('bcrypt');
+const dotenv = require('dotenv');
+const isAuthenticated = require('./middlewares/isAuthenticated.js');
+const auth = require('./routes/auth.js');
+const health = require('./routes/health.js');
+
 
 const dbPath = path.join(__dirname, '..', 'db', 'calendarios.db');
 const db = new Database(dbPath);
@@ -12,8 +18,10 @@ db.pragma('foreign_keys = ON');
 const app = express();
 const PORT = 3000;
 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+/*config */
+dotenv.config();
 //Sesiones
 app.use(
     session({
@@ -66,7 +74,7 @@ function requireLogin(req, res, next) {
 app.post('/register', (req, res) => {
     const { username, password } = req.body;
 
-    if(!username || !password) {
+    if (!username || !password) {
         return res.status(400).send('Falta usuario y contraseña.');
     }
 
@@ -91,7 +99,7 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
-    if(!username || !password) {
+    if (!username || !password) {
         return res.status(400).send('Falta usuario y contraseña.');
     }
     const user = findUserByUsername(username);
@@ -124,7 +132,7 @@ app.get('/logout', (req, res) => {
         res.redirect('/login.html');
     });
 });
-
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 //Rutas
 app.get('/', (req, res) => {
     if (!req.session.userID) {
@@ -134,6 +142,12 @@ app.get('/', (req, res) => {
 });
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
+
+
+
+app.use('/api/v1/health', isAuthenticated, health);
+app.use('/api/v1/auth', auth);
+
 
 //arrancar servidor
 app.listen(PORT, () => {
