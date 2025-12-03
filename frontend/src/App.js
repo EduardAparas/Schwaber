@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import 'primereact/resources/themes/lara-light-cyan/theme.css';  // Tema de PrimeReact
 import 'primereact/resources/primereact.min.css';
 import './App.css';
+import axios from "axios";
 import Login from './components/AUTH/Login';
 import Calendar from './components/Calendar/Home';
 
@@ -10,15 +11,16 @@ import Calendar from './components/Calendar/Home';
 
 
 
+
 function App() {
-  const { REACT_APP_BACKEND } = process.env;
+  const { REACT_APP_BACKEND, REACT_APP_PLANNER_API } = process.env;
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [user, setUser] = useState(null);
 
 
 
-  /*useEffect(() => {
-    axios.get(REACT_APP_BACKEND + '/check-auth', { withCredentials: true })
+  useEffect(() => {
+    axios.get(REACT_APP_PLANNER_API + '/auth/check', { withCredentials: true })
       .then(response => {
         setIsAuthenticated(response.data.authenticated);
         if (response.data.authenticated) {
@@ -31,7 +33,7 @@ function App() {
           window.location.href = redirectTo;
         }
       }).catch(error => { console.log(error) });
-  }, [REACT_APP_BACKEND, setUser]);*/
+  }, [REACT_APP_BACKEND, setUser]);
 
   const PrivateRoute = ({ element }) => {
     if (isAuthenticated === null) {

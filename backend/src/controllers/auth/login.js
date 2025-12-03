@@ -1,3 +1,10 @@
+const {
+    findUserByUsername,
+    createUser,
+    findCalendarByUserID,
+    createDefaultCalendarForUser
+} = require('../../../db/user.repository');
+const bcrypt = require('bcrypt');
 const login = async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -5,6 +12,7 @@ const login = async (req, res) => {
     }
     const user = findUserByUsername(username);
     if (!user) {
+        await createUser(username, password);
         return res.status(401).send('Usuario o contraseña incorrectos.');
     }
     const passwordCorrect = bcrypt.compareSync(password, user.password_hash);
@@ -21,7 +29,7 @@ const login = async (req, res) => {
     req.session.userID = user.id;
     req.session.calendarID = calendar.id;
     //Redirigir al calendario
-    res.redirect('/');
+    return res.status(200).send('ok');
 }
 
 module.exports = login;

@@ -8,6 +8,7 @@ const dotenv = require('dotenv');
 const isAuthenticated = require('./middlewares/isAuthenticated.js');
 const auth = require('./routes/auth.js');
 const health = require('./routes/health.js');
+const calendarRoutes = require('./routes/calendar.js');
 
 
 const dbPath = path.join(__dirname, '..', 'db', 'calendarios.db');
@@ -147,6 +148,7 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.use('/api/v1/health', isAuthenticated, health);
 app.use('/api/v1/auth', auth);
+app.use('/api/calendar', calendarRoutes);
 
 
 //arrancar servidor

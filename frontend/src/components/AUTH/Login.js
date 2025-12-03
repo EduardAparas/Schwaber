@@ -23,6 +23,12 @@ function Login({ redirect = true }) {
 
     try {
       const res = await login(username, password);
+      console.log(res);
+      if (res === 'ok') {
+        if (redirect) {
+          window.location.href = '/';
+        }
+      }
     }
     catch (error) {
       messages.current.show({ severity: 'error', summary: 'Error', detail: error.message });
