@@ -10,3 +10,9 @@ export const login = async (username, password) => {
     const res = await axios.post(queryUrl, { username, password }, { withCredentials: true });
     return res.data;
 };
+
+export const check = async () => {
+    const queryUrl = REACT_APP_PLANNER_API + "/auth/check";
+    const res = await axios.get(queryUrl, { withCredentials: true });
+    return res.data;
+};
