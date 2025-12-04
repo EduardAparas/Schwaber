@@ -14,7 +14,7 @@ const {
     createUser,
     findCalendarByUserID,
     createDefaultCalendarForUser
-} = require('../db/user.repository');
+} = require('../db/user.repository.js');
 
 
 const dbPath = path.join(__dirname, '..', 'db', 'calendarios.db');
